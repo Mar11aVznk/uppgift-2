@@ -1,4 +1,6 @@
 
+import { Suspense } from "react";
+
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
@@ -11,9 +13,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default async function Home() {
+// Окремий компонент для отримання користувачів
+async function UsersList() {
   const allUsers = await db.select().from(users);
 
+  return (
+    <div className="grid gap-6 sm:grid-cols-2">
+      {allUsers.map((user) => (
+        <Card key={user.id}>
+          <CardHeader>
+            <CardTitle>{user.name}</CardTitle>
+            <CardDescription>
+              Användare i systemet
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <p className="mb-4">{user.email}</p>
+            <Button>Visa supportärenden</Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+// Головна сторінка
+export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 px-6 py-16">
       <div className="mx-auto max-w-4xl">
@@ -32,23 +58,9 @@ export default async function Home() {
           Användare
         </h2>
 
-        <div className="grid gap-6 sm:grid-cols-2">
-          {allUsers.map((user) => (
-            <Card key={user.id}>
-              <CardHeader>
-                <CardTitle>{user.name}</CardTitle>
-                <CardDescription>
-                  Användare i systemet
-                </CardDescription>
-              </CardHeader>
-
-              <CardContent>
-                <p className="mb-4">{user.email}</p>
-                <Button>Visa supportärenden</Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Suspense fallback={<p>Loading users...</p>}>
+          <UsersList />
+        </Suspense>
       </div>
     </main>
   );

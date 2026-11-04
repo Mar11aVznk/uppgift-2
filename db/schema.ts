@@ -44,7 +44,7 @@ export const ticketsRelations = relations(tickets, ({ one }) => ({
         references: [users.id],
     }),
 
-    categories: one(categories, {
+    category: one(categories, {
         fields: [tickets.categoryId],
         references: [categories.id],
     }),
