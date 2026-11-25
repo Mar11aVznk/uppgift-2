@@ -4,6 +4,9 @@ import { eq } from "drizzle-orm"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Suspense } from "react"
+import { updateTicketStatus } from "../actions"
+import { Button } from "@/components/ui/button"
+
 
 async function TicketContent({ params }: {params: Promise<{id: string}>}) {
 
@@ -39,10 +42,35 @@ async function TicketContent({ params }: {params: Promise<{id: string}>}) {
           <p>{ticket.description}</p>
         </div>
 
-        <div>
-          <h2 className="font-semibold">Status</h2>
-          <p>{ticket.status}</p>
-        </div>
+<div>
+  <h2 className="font-semibold">Status</h2>
+
+  <p className="mb-3">{ticket.status}</p>
+
+  <form action={updateTicketStatus} className="space-y-3">
+
+    <input
+      type="hidden"
+      name="ticketId"
+      value={ticket.id}
+    />
+
+    <select
+      name="status"
+      defaultValue={ticket.status ?? "open"}
+      className="rounded-md border p-2"
+    >
+      <option value="open">Open</option>
+      <option value="in-progress">In progress</option>
+      <option value="resolved">Resolved</option>
+    </select>
+
+    <Button type="submit">
+      Save status
+    </Button>
+
+  </form>
+</div>
 
         <div>
           <h2 className="font-semibold">Kategori</h2>
